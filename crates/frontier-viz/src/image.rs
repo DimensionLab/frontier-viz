@@ -665,9 +665,18 @@ mod tests {
             name: "GPU test".into(),
             interp: Interp::Oklab,
             stops: vec![
-                Stop { pos: 0.0, color: [0.0, 0.0, 0.4] },
-                Stop { pos: 0.5, color: [1.0, 1.0, 1.0] },
-                Stop { pos: 1.0, color: [0.6, 0.0, 0.0] },
+                Stop {
+                    pos: 0.0,
+                    color: [0.0, 0.0, 0.4],
+                },
+                Stop {
+                    pos: 0.5,
+                    color: [1.0, 1.0, 1.0],
+                },
+                Stop {
+                    pos: 1.0,
+                    color: [0.6, 0.0, 0.0],
+                },
             ],
         })
         .expect("a free custom slot");
@@ -678,8 +687,21 @@ mod tests {
         let custom = ColorScale::from(Colormap::Custom(slot));
         scales.push((custom, (0.0, 1.0)));
         scales.push((ColorScale { steps: 4, ..custom }, (0.0, 1.0)));
-        scales.push((ColorScale { reverse: true, steps: 5, ..ColorScale::from(Colormap::Turbo) }, (0.0, 1.0)));
-        scales.push((ColorScale { log: true, ..ColorScale::from(Colormap::Magma) }, (0.01, 1.0)));
+        scales.push((
+            ColorScale {
+                reverse: true,
+                steps: 5,
+                ..ColorScale::from(Colormap::Turbo)
+            },
+            (0.0, 1.0),
+        ));
+        scales.push((
+            ColorScale {
+                log: true,
+                ..ColorScale::from(Colormap::Magma)
+            },
+            (0.01, 1.0),
+        ));
         scales.push((
             ColorScale {
                 below: Some([0.0, 0.0, 1.0]),
@@ -699,7 +721,15 @@ mod tests {
                 aspect: Some(w as f32 / h as f32),
                 ..ImageLayer::new(0, (0.0, 0.0, w as f32, h as f32))
             };
-            r.render(&ctx.device, &ctx.queue, target.view(), w, h, &[layer], background);
+            r.render(
+                &ctx.device,
+                &ctx.queue,
+                target.view(),
+                w,
+                h,
+                &[layer],
+                background,
+            );
             let frame = target.read_back(&ctx).unwrap();
             let cell_w = w / nx;
             let mut row = Vec::new();
@@ -728,8 +758,14 @@ mod tests {
             name: "GPU test".into(),
             interp: Interp::Srgb,
             stops: vec![
-                Stop { pos: 0.0, color: [0.0, 1.0, 0.0] },
-                Stop { pos: 1.0, color: [0.0, 1.0, 0.0] },
+                Stop {
+                    pos: 0.0,
+                    color: [0.0, 1.0, 0.0],
+                },
+                Stop {
+                    pos: 1.0,
+                    color: [0.0, 1.0, 0.0],
+                },
             ],
         });
         let layer = ImageLayer {
@@ -738,7 +774,15 @@ mod tests {
             aspect: Some(w as f32 / h as f32),
             ..ImageLayer::new(0, (0.0, 0.0, w as f32, h as f32))
         };
-        r.render(&ctx.device, &ctx.queue, target.view(), w, h, &[layer], background);
+        r.render(
+            &ctx.device,
+            &ctx.queue,
+            target.view(),
+            w,
+            h,
+            &[layer],
+            background,
+        );
         let frame = target.read_back(&ctx).unwrap();
         let at = ((h / 2 * w + 3 * (w / nx) + 10) * 4) as usize;
         assert_eq!(&frame.data[at..at + 3], &[0, 255, 0]);

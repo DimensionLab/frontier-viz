@@ -354,7 +354,10 @@ mod tests {
             let mut left = c;
             left.orbit(-40.0, 0.0);
             let (x1, y1) = near_point_px(&left, p);
-            assert!(x1 < x0 - 5.0, "drag left moves the surface left: {x0} -> {x1}");
+            assert!(
+                x1 < x0 - 5.0,
+                "drag left moves the surface left: {x0} -> {x1}"
+            );
             // (a turn about the vertical at a pitched view carries the point on a flat arc)
             assert!((y1 - y0).abs() < (x1 - x0).abs() * 0.2, "{y0} -> {y1}");
             let mut right = c;
@@ -363,17 +366,26 @@ mod tests {
             let mut down = c;
             down.orbit(0.0, 40.0);
             let (x2, y2) = near_point_px(&down, p);
-            assert!(y2 > y0 + 5.0, "drag down moves the surface down: {y0} -> {y2}");
+            assert!(
+                y2 > y0 + 5.0,
+                "drag down moves the surface down: {y0} -> {y2}"
+            );
             assert!((x2 - x0).abs() < (y2 - y0).abs() * 0.2, "{x0} -> {x2}");
             let mut up = c;
             up.orbit(0.0, -40.0);
             assert!(near_point_px(&up, p).1 < y0 - 5.0);
             // The switches turn each axis around on its own.
-            let nav = Navigation { invert_orbit_x: true, ..Default::default() };
+            let nav = Navigation {
+                invert_orbit_x: true,
+                ..Default::default()
+            };
             let mut inv = c;
             inv.orbit_with(nav, -40.0, 40.0);
             let (xi, yi) = near_point_px(&inv, p);
-            assert!(xi > x0 + 5.0 && yi > y0 + 5.0, "({x0}, {y0}) -> ({xi}, {yi})");
+            assert!(
+                xi > x0 + 5.0 && yi > y0 + 5.0,
+                "({x0}, {y0}) -> ({xi}, {yi})"
+            );
         }
     }
 
@@ -386,15 +398,27 @@ mod tests {
         let mut moved = c;
         moved.pan(30.0, 20.0, 600.0);
         let (x1, y1) = near_point_px(&moved, p);
-        assert!((x1 - x0 - 30.0).abs() < 1.0 && (y1 - y0 - 20.0).abs() < 1.0, "({x1}, {y1})");
+        assert!(
+            (x1 - x0 - 30.0).abs() < 1.0 && (y1 - y0 - 20.0).abs() < 1.0,
+            "({x1}, {y1})"
+        );
         // A wheel rolled away from the user reports a negative delta.
         let mut z = c;
         z.zoom(-100.0);
         assert!(z.distance < c.distance);
         let mut z = c;
-        z.zoom_with(Navigation { invert_zoom: true, ..Default::default() }, -100.0);
+        z.zoom_with(
+            Navigation {
+                invert_zoom: true,
+                ..Default::default()
+            },
+            -100.0,
+        );
         assert!(z.distance > c.distance);
-        assert_eq!(Navigation::preset("follow", Navigation::default()), Navigation::default());
+        assert_eq!(
+            Navigation::preset("follow", Navigation::default()),
+            Navigation::default()
+        );
         assert!(Navigation::preset("camera", Navigation::default()).invert_orbit_x);
     }
 
