@@ -1,4 +1,5 @@
 [package]
+workspace = "../.."
 name = "frontier-viz"
 description = "GPU-accelerated (wgpu) rendering core for fields, meshes and neural-network topology"
 version.workspace = true
