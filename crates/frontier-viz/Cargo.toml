@@ -1,0 +1,38 @@
+[package]
+name = "frontier-viz"
+description = "GPU-accelerated (wgpu) rendering core for fields, meshes and neural-network topology"
+version.workspace = true
+edition.workspace = true
+license = "Apache-2.0"
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+frontier-core.workspace = true
+frontier-data.workspace = true
+wgpu.workspace = true
+pollster.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+bytemuck = { version = "1.25", features = ["derive"] }
+arrow-array = { version = "60", optional = true }
+arrow-ipc = { version = "60", optional = true }
+arrow-schema = { version = "60", optional = true }
+png = { version = "0.18", optional = true }
+
+[features]
+default = ["arrow"]
+# Decode `GET /datasets/{id}/samples/{sid}/surface` (Arrow IPC stream) into a SurfaceMesh.
+arrow = ["dep:arrow-array", "dep:arrow-ipc", "dep:arrow-schema"]
+# Offscreen render -> PNG bytes (desktop WebView fallback, headless thumbnails).
+png = ["dep:png"]
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+# `frontier-core` uses uuid v7 ids; on wasm uuid needs an explicit randomness source.
+uuid = { version = "1", features = ["js"] }
+
+[[example]]
+name = "render_surface"
+required-features = ["png"]
